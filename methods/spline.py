@@ -42,7 +42,7 @@ def spline(original_data, knots_number):
     coefficients = numpy.linalg.solve(A, b)
 
     values = []
-    for i in range(len(original_data) - 1):
+    for i in range(int(data[len(data) - 1][0] + 1)):
         for j in range(len(data) - 1):
             value = 0
             if data[j][0] <= i <= data[j + 1][0]:
