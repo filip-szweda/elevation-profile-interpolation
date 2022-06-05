@@ -51,4 +51,4 @@ def spline(original_data, knots_number):
                     value += coefficients[coefficients_number * j + k] * h ** k
                 break
         values.append(value)
-    return values
+    return values, data

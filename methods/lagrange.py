@@ -11,4 +11,4 @@ def lagrange(original_data, knots_number):
                     tmp *= (original_data[i][0] - data[k][0]) / (data[j][0] - data[k][0])
             value += tmp
         values.append(value)
-    return values
+    return values, data

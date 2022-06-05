@@ -5,16 +5,18 @@ from methods.lagrange import lagrange
 from methods.spline import spline
 
 
-def plot_interpolation(name, knots_number, real_values, interpolated_values):
+def plot_interpolation(name, knots_number, sample_data, real_values, interpolated_values):
     font = {'family': 'Arial', 'size': 10}
     pyplot.rc('font', **font)
-    pyplot.plot(range(len(interpolated_values)), interpolated_values, label='Interpolated values')
-    pyplot.plot(range(len(real_values)), real_values, label='Real values')
+    pyplot.plot(range(len(interpolated_values)), interpolated_values, label='Interpolated values', color='r')
+    pyplot.plot(range(len(real_values)), real_values, label='Real values', color='b')
+    for _, point in enumerate(sample_data):
+        pyplot.scatter(point[0], point[1], s=125, marker='.', color='g')
     pyplot.xlabel('Point')
     pyplot.ylabel('Height [m]')
     pyplot.title(name + ' interpolation values in comparison to real values [' + str(knots_number) + ' knots]')
     pyplot.legend()
-    pyplot.savefig('charts/' + name + '-' + str(knots_number) + '.png')
+    pyplot.savefig('charts/' + name + '-' + str(knots_number) + '-knots.png')
     pyplot.close()
 
 
@@ -26,8 +28,8 @@ if __name__ == '__main__':
 
     knots_numbers = [10, 40, 70, 100]
     for knots_number in knots_numbers:
-        lagrange_interpolated_values = lagrange(data, knots_number)
-        plot_interpolation('Lagrange', knots_number, real_values, lagrange_interpolated_values)
+        lagrange_interpolated_values, sample_data = lagrange(data, knots_number)
+        plot_interpolation('Lagrange', knots_number, sample_data, real_values, lagrange_interpolated_values)
 
-        spline_interpolated_values = spline(data, knots_number)
-        plot_interpolation('Spline', knots_number, real_values, spline_interpolated_values)
+        spline_interpolated_values, sample_data = spline(data, knots_number)
+        plot_interpolation('Spline', knots_number, sample_data, real_values, spline_interpolated_values)
