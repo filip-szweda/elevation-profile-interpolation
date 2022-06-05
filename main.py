@@ -26,13 +26,13 @@ def spline_calc(x, coefficients_number, coefficients, data):
             break
     return result
 
-def spline(datax):
-    data = [(1, 6), (3, -2), (5, 4)]
+def spline(original_data, step):
+    data = original_data[::10]
     n = len(data) - 1
     equations_number = n * 4
     coefficients_number = 4
-    matrix = np.array([[0 for x in range(equations_number)] for y in range(equations_number)])
-    b = np.array([0 for x in range(equations_number)])
+    matrix = np.array([[0.0 for x in range(equations_number)] for y in range(equations_number)])
+    b = np.array([0.0 for x in range(equations_number)])
 
     for j in range(0, n):
         h = data[j + 1][0] - data[j][0]
@@ -66,13 +66,16 @@ def spline(datax):
 
     results = np.linalg.solve(matrix, b)
     values = []
-    for i in range(0, data[-1][0] + 1):
+    test = len(original_data)
+    for i in range(0, test - 1):
         value = spline_calc(i, 4, results, data)
         values.append(value)
     return values
 
 if __name__ == '__main__':
     data = pandas.read_csv('WielkiKanionKolorado.csv').values
+    for i, val in enumerate(data):
+        val[0] = i
 
     # steps = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 
@@ -85,10 +88,10 @@ if __name__ == '__main__':
     # pyplot.title('Lagrange interpolation')
     # pyplot.show()
 
-    values = spline(data[::10])
+    values = spline(data, 10)
     font = {'family': 'Arial', 'size': 10}
     pyplot.rc('font', **font)
-    pyplot.plot(range(len(values)), values)
+    pyplot.plot(range(len(data)-1), values)
     pyplot.xlabel('x')
     pyplot.ylabel('y')
     pyplot.title('Spline interpolation')
