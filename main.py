@@ -16,9 +16,18 @@ def lagrange(data):
         values.append(value)
     return values
 
+def spline_calc(x, coefficients_number, coefficients, data):
+    for i in range(len(data)-1):
+        result = 0
+        if data[i][0] <= x <= data[i+1][0]:
+            for j in range(coefficients_number):
+                h = x - data[i][0]
+                result += coefficients[4 * i + j] * h**j
+            break
+    return result
 
-def spline(data):
-    # data = [(1, 6), (3, -2), (5, 4)]
+def spline(datax):
+    data = [(1, 6), (3, -2), (5, 4)]
     n = len(data) - 1
     equations_number = n * 4
     coefficients_number = 4
@@ -55,9 +64,12 @@ def spline(data):
             matrix[equations_number - 1][-2] = 2
             matrix[equations_number - 1][-1] = 6 * h
 
-    result = np.linalg.solve(matrix, b)
-    return result
-
+    results = np.linalg.solve(matrix, b)
+    values = []
+    for i in range(0, data[-1][0] + 1):
+        value = spline_calc(i, 4, results, data)
+        values.append(value)
+    return values
 
 if __name__ == '__main__':
     data = pandas.read_csv('WielkiKanionKolorado.csv').values
@@ -76,7 +88,7 @@ if __name__ == '__main__':
     values = spline(data[::10])
     font = {'family': 'Arial', 'size': 10}
     pyplot.rc('font', **font)
-    pyplot.plot(range(len(data)), values)
+    pyplot.plot(range(len(values)), values)
     pyplot.xlabel('x')
     pyplot.ylabel('y')
     pyplot.title('Spline interpolation')
