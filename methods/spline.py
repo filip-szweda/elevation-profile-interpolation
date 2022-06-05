@@ -2,18 +2,18 @@ import numpy
 
 
 def spline(original_data, step):
-    data = original_data[::10]
+    data = original_data[::step]
     n = len(data) - 1
-    equations_number = n * 4
     coefficients_number = 4
+    equations_number = n * coefficients_number
     matrix = numpy.array([[0.0 for x in range(equations_number)] for y in range(equations_number)])
     b = numpy.array([0.0 for x in range(equations_number)])
 
-    for j in range(0, n):
+    for j in range(n):
         h = data[j + 1][0] - data[j][0]
 
         matrix[coefficients_number * j][coefficients_number * j] = 1
-        b[4 * j] = data[j][1]
+        b[coefficients_number * j] = data[j][1]
 
         for i in range(coefficients_number):
             matrix[coefficients_number * j + 1][coefficients_number * j + i] = h ** i
@@ -40,15 +40,15 @@ def spline(original_data, step):
             matrix[equations_number - 1][-1] = 6 * h
 
     coefficients = numpy.linalg.solve(matrix, b)
+
     values = []
-    test = len(original_data)
-    for i in range(0, test - 1):
+    for i in range(len(original_data) - 1):
         for j in range(len(data) - 1):
             value = 0
             if data[j][0] <= i <= data[j + 1][0]:
                 for k in range(coefficients_number):
                     h = i - data[j][0]
-                    value += coefficients[4 * j + k] * h ** k
+                    value += coefficients[coefficients_number * j + k] * h ** k
                 break
         values.append(value)
     return values
