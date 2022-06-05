@@ -1,5 +1,5 @@
 def lagrange(original_data, knots_number):
-    step = int(len(original_data) / knots_number)
+    step = int(round(len(original_data) / knots_number * 2) / 2)
     data = original_data[::step]
     values = []
     for i, _ in reversed(list(enumerate(original_data))):
