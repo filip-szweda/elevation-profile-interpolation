@@ -1,7 +1,8 @@
 import numpy
 
 
-def spline(original_data, step):
+def spline(original_data, knots_number):
+    step = int(len(original_data) / knots_number)
     data = original_data[::step]
     n = len(data) - 1
     coefficients_number = 4
