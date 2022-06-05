@@ -1,99 +1,32 @@
 from matplotlib import pyplot
-import numpy as np
 import pandas
 
+from methods.lagrange import lagrange
+from methods.spline import spline
 
-def lagrange(data):
-    values = []
-    for i, _ in reversed(list(enumerate(data))):
-        value = 0
-        for j, _ in enumerate(data):
-            tmp = data[j][1]
-            for k, _ in enumerate(data):
-                if j != k:
-                    tmp *= (data[i][0] - data[k][0]) / (data[j][0] - data[k][0])
-            value += tmp
-        values.append(value)
-    return values
 
-def spline_calc(x, coefficients_number, coefficients, data):
-    for i in range(len(data)-1):
-        result = 0
-        if data[i][0] <= x <= data[i+1][0]:
-            for j in range(coefficients_number):
-                h = x - data[i][0]
-                result += coefficients[4 * i + j] * h**j
-            break
-    return result
+def plot_interpolation(real_values, interpolated_values):
+    font = {'family': 'Arial', 'size': 10}
+    pyplot.rc('font', **font)
+    pyplot.plot(range(len(interpolated_values)), interpolated_values, label='Interpolated values')
+    pyplot.plot(range(len(real_values)), real_values, label='Real values')
+    pyplot.xlabel('x')
+    pyplot.ylabel('y')
+    pyplot.title('Lorem ipsum')
+    pyplot.legend()
+    pyplot.show()
 
-def spline(original_data, step):
-    data = original_data[::10]
-    n = len(data) - 1
-    equations_number = n * 4
-    coefficients_number = 4
-    matrix = np.array([[0.0 for x in range(equations_number)] for y in range(equations_number)])
-    b = np.array([0.0 for x in range(equations_number)])
-
-    for j in range(0, n):
-        h = data[j + 1][0] - data[j][0]
-
-        matrix[coefficients_number * j][coefficients_number * j] = 1
-        b[4 * j] = data[j][1]
-
-        for i in range(coefficients_number):
-            matrix[coefficients_number * j + 1][coefficients_number * j + i] = h ** i
-            b[coefficients_number * j + 1] = data[j + 1][1]
-
-        if j > 0:
-            for i in range(coefficients_number):
-                if i == 0:
-                    matrix[coefficients_number * (j - 1) + 2][i + coefficients_number * (j - 1)] = i
-                else:
-                    matrix[coefficients_number * (j - 1) + 2][i + coefficients_number * (j - 1)] = i * h ** (
-                            i - 1)
-            matrix[coefficients_number * (j - 1) + 2][1 + coefficients_number * j] = -1
-
-        if j > 0:
-            matrix[coefficients_number * (j - 1) + 3][coefficients_number * (j - 1) + 2] = 2
-            matrix[coefficients_number * (j - 1) + 3][coefficients_number * (j - 1) + 3] = 6 * h
-            matrix[coefficients_number * (j - 1) + 3][coefficients_number * j + 2] = -2
-
-        if j == n - 2:
-            matrix[equations_number - 2][2] = 2
-        if j == n - 1:
-            matrix[equations_number - 1][-2] = 2
-            matrix[equations_number - 1][-1] = 6 * h
-
-    results = np.linalg.solve(matrix, b)
-    values = []
-    test = len(original_data)
-    for i in range(0, test - 1):
-        value = spline_calc(i, 4, results, data)
-        values.append(value)
-    return values
 
 if __name__ == '__main__':
     data = pandas.read_csv('WielkiKanionKolorado.csv').values
-    for i, val in enumerate(data):
-        val[0] = i
+    for i, value in enumerate(data):
+        value[0] = i
 
-    # steps = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    steps = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    real_values = [value[1] for value in data]
 
-    # values = lagrange(data[::10])
-    # font = {'family': 'Arial', 'size': 10}
-    # pyplot.rc('font', **font)
-    # pyplot.plot(range(len(data)), values)
-    # pyplot.xlabel('x')
-    # pyplot.ylabel('y')
-    # pyplot.title('Lagrange interpolation')
-    # pyplot.show()
+    lagrange_interpolated_values = lagrange(data, 10)
+    plot_interpolation(real_values, lagrange_interpolated_values)
 
-    values = spline(data, 10)
-    font = {'family': 'Arial', 'size': 10}
-    pyplot.rc('font', **font)
-    pyplot.plot(range(len(data)-1), values)
-    pyplot.xlabel('x')
-    pyplot.ylabel('y')
-    pyplot.title('Spline interpolation')
-    pyplot.show()
-    test = ""
+    spline_interpolated_values = spline(data, 10)
+    plot_interpolation(real_values, spline_interpolated_values)
