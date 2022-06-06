@@ -14,9 +14,9 @@ def plot_interpolation(name, knots_number, data_set_number, sample_data, real_va
     for i, point in enumerate(sample_data):
         if i != 0:
             pyplot.scatter(point[0], point[1], s=125, marker='.', color='g')
-    pyplot.xlabel('Point')
+    pyplot.xlabel('Point number')
     pyplot.ylabel('Height [m]')
-    pyplot.title(name + ' interpolation values in comparison to real values [' + str(knots_number) + ' knots]')
+    pyplot.title(name + ' interpolation compared to real values [' + str(knots_number) + ' knots]')
     pyplot.legend()
     pyplot.savefig('charts' + str(data_set_number + 1) + '/' + name + '-' + str(knots_number) + '-knots.png')
     pyplot.close()
