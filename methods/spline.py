@@ -11,10 +11,16 @@ def spline(original_data, knots_number):
     b = numpy.array([0.0 for _ in range(equations_number)])
 
     for i in range(n):
-        h = data[i + 1][0] - data[i][0]
-
         A[coefficients_number * i][coefficients_number * i] = 1
         b[coefficients_number * i] = data[i][1]
+
+        h = data[i + 1][0] - data[i][0]
+
+        if i == n - 1:
+            A[equations_number - 1][-2] = 2
+            A[equations_number - 1][-1] = 6 * h
+        elif i == n - 2:
+            A[equations_number - 2][2] = 2
 
         for j in range(coefficients_number):
             A[coefficients_number * i + 1][coefficients_number * i + j] = h ** j
@@ -31,12 +37,6 @@ def spline(original_data, knots_number):
             A[coefficients_number * (i - 1) + 3][coefficients_number * (i - 1) + 2] = 2
             A[coefficients_number * (i - 1) + 3][coefficients_number * (i - 1) + 3] = 6 * h
             A[coefficients_number * (i - 1) + 3][coefficients_number * i + 2] = -2
-
-        if i == n - 1:
-            A[equations_number - 1][-2] = 2
-            A[equations_number - 1][-1] = 6 * h
-        elif i == n - 2:
-            A[equations_number - 2][2] = 2
 
     coefficients = numpy.linalg.solve(A, b)
 
