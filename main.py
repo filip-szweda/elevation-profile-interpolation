@@ -5,7 +5,7 @@ from methods.lagrange import lagrange
 from methods.spline import spline
 
 
-def plot_interpolation(name, knots_number, sample_data, real_values, interpolated_values):
+def plot_interpolation(name, knots_number, data_set_number, sample_data, real_values, interpolated_values):
     font = {'family': 'Arial', 'size': 10}
     pyplot.rc('font', **font)
     pyplot.plot(range(len(interpolated_values)), interpolated_values, label='Interpolated values', color='r')
@@ -16,20 +16,24 @@ def plot_interpolation(name, knots_number, sample_data, real_values, interpolate
     pyplot.ylabel('Height [m]')
     pyplot.title(name + ' interpolation values in comparison to real values [' + str(knots_number) + ' knots]')
     pyplot.legend()
-    pyplot.savefig('charts/' + name + '-' + str(knots_number) + '-knots.png')
+    pyplot.savefig('charts' + str(data_set_number + 1) + '/' + name + '-' + str(knots_number) + '-knots.png')
     pyplot.close()
 
 
 if __name__ == '__main__':
-    data = pandas.read_csv('WielkiKanionKolorado.csv').values
-    for i, value in enumerate(data):
-        value[0] = i
-    real_values = [value[1] for value in data]
+    data_sets = ['data_sets/GlebiaChallengera.csv', 'data_sets/MountEverest.csv', 'data_sets/WielkiKanionKolorado.csv']
+    for data_set_number, data_set in enumerate(data_sets):
+        data = pandas.read_csv(data_set).values
+        for i, value in enumerate(data):
+            value[0] = i
+        real_values = [value[1] for value in data]
 
-    knots_numbers = [10, 40, 70, 100]
-    for knots_number in knots_numbers:
-        lagrange_interpolated_values, sample_data = lagrange(data, knots_number)
-        plot_interpolation('Lagrange', knots_number, sample_data, real_values, lagrange_interpolated_values)
+        knots_numbers = [10, 30, 40, 70, 100]
+        for knots_number in knots_numbers:
+            lagrange_interpolated_values, sample_data = lagrange(data, knots_number)
+            plot_interpolation('Lagrange', knots_number, data_set_number, sample_data, real_values,
+                               lagrange_interpolated_values)
 
-        spline_interpolated_values, sample_data = spline(data, knots_number)
-        plot_interpolation('Spline', knots_number, sample_data, real_values, spline_interpolated_values)
+            spline_interpolated_values, sample_data = spline(data, knots_number)
+            plot_interpolation('Spline', knots_number, data_set_number, sample_data, real_values,
+                               spline_interpolated_values)
