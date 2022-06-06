@@ -10,8 +10,10 @@ def plot_interpolation(name, knots_number, data_set_number, sample_data, real_va
     pyplot.rc('font', **font)
     pyplot.plot(range(len(interpolated_values)), interpolated_values, label='Interpolated values', color='r')
     pyplot.plot(range(len(real_values)), real_values, label='Real values', color='b')
-    for _, point in enumerate(sample_data):
-        pyplot.scatter(point[0], point[1], s=125, marker='.', color='g')
+    pyplot.scatter(sample_data[0][0], sample_data[0][1], s=125, marker='.', label='Knots', color='g')
+    for i, point in enumerate(sample_data):
+        if i != 0:
+            pyplot.scatter(point[0], point[1], s=125, marker='.', color='g')
     pyplot.xlabel('Point')
     pyplot.ylabel('Height [m]')
     pyplot.title(name + ' interpolation values in comparison to real values [' + str(knots_number) + ' knots]')
